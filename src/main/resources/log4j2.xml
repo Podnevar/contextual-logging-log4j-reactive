@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project>
+<Configuration>
+    <Appenders>
+        <Socket name="GELF" protocol="tcp" host="localhost" port="9850">
+            <GelfLayout includeStackTrace="true" includeThreadContext="true" includeNullDelimiter="true"
+                        compressionType="OFF" threadContextIncludes="code,requestId">
+            </GelfLayout>
+        </Socket>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%vcl{requestId}] %-5level %logger{36} - %msg%n</pattern>
+            </PatternLayout>
+        </Console>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %m%n" />
+        </Console>
+
+        <Console name="ConsoleJSONAppender" target="SYSTEM_OUT">
+            <JsonLayout properties="true" propertiesAsList="false" complete="false" compact="true" includeStacktrace="true" stacktraceAsString="true" eventEol="true"
+                        includeNullDelimiter="false" objectMessageAsJsonObject="false">
+            </JsonLayout>
+        </Console>
+
+        <File name="FileJSONAppenderFull" fileName="/tmp/json_full.log">
+            <JsonLayout properties="true" propertiesAsList="false" complete="true" compact="false" includeStacktrace="true" stacktraceAsString="true" eventEol="false"
+                        includeNullDelimiter="false" objectMessageAsJsonObject="false">
+            </JsonLayout>
+        </File>
+
+    </Appenders>
+        <Loggers>
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="GELF"/>
+        </Logger>
+        <Logger name="org.hibernate.type.descriptor.sql" level="TRACE" additivity="false">
+            <AppenderRef ref="GELF"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="GELF" />
+        </Root>
+    </Loggers>
+</Configuration>
+
